@@ -9,7 +9,6 @@ export class AppController {
   @Post('/article')
   @HttpCode(200)
   async getArticleData(@Body() postData): Promise<string> {
-    Logger.debug(postData.url);
     let htmlData = await this.appService.getArticleData(postData.url);
     if (htmlData == null) {
       Logger.error('no html');
@@ -31,6 +30,5 @@ export class AppController {
       return JSON.parse('{"nodata":"nodata"}');
     }
     return JSON.parse(jsonData);
-
   }
 }
