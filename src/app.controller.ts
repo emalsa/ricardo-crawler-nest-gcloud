@@ -8,8 +8,8 @@ export class AppController {
 
   @Post('/article')
   @HttpCode(200)
-  async getArticleData(@Body() postData): Promise<string> {
-    let htmlData = await this.appService.getArticleData(postData.url);
+  async getRicardoData(@Body() postData): Promise<string> {
+    let htmlData = await this.appService.getRicardoData(postData.url);
     if (htmlData == null) {
       Logger.error('no html');
       return;
@@ -20,9 +20,20 @@ export class AppController {
     let scriptTags = $('script');
     let jsonData = null;
 
+
     scriptTags.each((index, el,) => {
-      if ($(el).attr('id') == '__NEXT_DATA__' && $(el).text() != null) {
+      if (postData.type === 'article' && $(el).attr('id') == '__NEXT_DATA__' && $(el).text() != null) {
         jsonData = $(el).text();
+        return jsonData;
+      } else if (postData.type === 'seller-articles' && $(el).text() != null) {
+        if ($(el).text().startsWith('ricardo=')) {
+          jsonData = $(el).text().replace('ricardo=', '');
+          if (jsonData.endsWith(';') || jsonData.endsWith('<')) {
+            jsonData = jsonData.slice(0, -1)
+          }
+          return jsonData;
+
+        }
       }
     });
 
